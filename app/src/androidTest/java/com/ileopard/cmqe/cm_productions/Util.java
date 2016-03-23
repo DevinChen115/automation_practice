@@ -302,19 +302,19 @@ public class Util {
         return deviceInfo;
     }
 
-    public String[] getLockAppList() {
-        String[] result;
-        StringBuffer tmp = new StringBuffer();
-        try {
-            goToAppLockHome();
-            UiCollection test = new UiCollection(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_app_list"));
-            test.is
-
-        } catch (UiObjectNotFoundException e) {
-            Assert.assertTrue(e.toString(),false);
-        }
-
-    }
+//    public String[] getLockAppList() {
+//        String[] result;
+//        StringBuffer tmp = new StringBuffer();
+//        try {
+//            goToAppLockHome();
+//            UiCollection test = new UiCollection(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_app_list"));
+//            test.is
+//
+//        } catch (UiObjectNotFoundException e) {
+//            Assert.assertTrue(e.toString(),false);
+//        }
+//
+//    }
 
     public void goToAppLockHome() throws UiObjectNotFoundException {
         launchAppInHomeScreen(Define.appLock);

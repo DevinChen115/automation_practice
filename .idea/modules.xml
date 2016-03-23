@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CM_Productions.iml" filepath="$PROJECT_DIR$/CM_Productions.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/automation_practice.iml" filepath="$PROJECT_DIR$/automation_practice.iml" />
     </modules>
   </component>
 </project>
