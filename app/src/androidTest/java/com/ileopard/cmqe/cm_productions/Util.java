@@ -140,6 +140,7 @@ public class Util {
         }
     }
 
+
     public  void setLockAppFrequency(String frequency) throws UiObjectNotFoundException {
         String lockFrequency=null;
         switch (frequency){
@@ -329,6 +330,35 @@ public class Util {
             device.waitForIdle();
             leftTitle = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/custom_title_label"));
             leftTitleStr = leftTitle.getText();
+        }
+    }
+    /**
+     * 在上鎖設定頁, 勾選解鎖全部 app
+     * //@param unlock true = 勾選
+     * */
+    public void setUnLockAllApp(Boolean unlock){
+        UiObject unLockAllApp = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/setting_universal_lock_btn"));
+        try{
+            if(unlock = false){
+                if(unLockAllApp.isSelected()){
+                    unLockAllApp.click();
+                }
+            }else {
+                if(!(unLockAllApp.isSelected())){
+                    unLockAllApp.click();
+                }
+            }
+        }catch (UiObjectNotFoundException e){
+            Assert.assertTrue(e.toString(),false);
+        }
+    }
+
+    public Boolean checkViewByResourceId(String resourceId){
+        UiObject view = device.findObject(new UiSelector().resourceId(resourceId));
+        if(view.exists()){
+            return true;
+        }else {
+            return false;
         }
     }
 }
