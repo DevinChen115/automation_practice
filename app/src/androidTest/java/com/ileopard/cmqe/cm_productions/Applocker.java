@@ -142,7 +142,6 @@ public class Applocker{
             util.setLockAppFrequency(Define.freq_screenLock);
             util.setUnLockAllApp(true);
             util.launchAppInHomeScreen(Define.app_youtube);
-            Log.d("Devin",util.checkViewByResourceId(rId).toString());
             sleep(1000);
             if(util.checkViewByResourceId(rId)){
                 mDevice.swipe(util.getSwipePwdV2(),40);
