@@ -11,4 +11,5 @@ public class Define {
     public static String app_youtube = "YouTube";
     public static String app_facebook = "Facebook";
     public static String pkgName_youtube="com.google.android.youtube";
+    public static String app_line = "LINE";
 }
