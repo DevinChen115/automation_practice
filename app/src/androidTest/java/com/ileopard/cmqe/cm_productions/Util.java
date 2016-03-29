@@ -256,37 +256,42 @@ public class Util {
     }
 
     public  Point[] getSwipePwd() {
+        //AppLock主畫面下的鎖
         Point point[]= new Point[3];
-        point[0] = new Point(280,820);
-        point[1] = new Point(280,1330);
-        point[2] = new Point(780,1330);
+        point[0] = new Point((int)Math.round(device.getDisplayWidth() * 0.25),(int)Math.round(device.getDisplayHeight()*0.45));
+        point[1] = new Point((int)Math.round(device.getDisplayWidth()*0.25),(int)Math.round(device.getDisplayHeight()*0.81));
+        point[2] = new Point((int)Math.round(device.getDisplayWidth()*0.75),(int)Math.round(device.getDisplayHeight()*0.81));
         return point;
     }
 
     public  Point[] getWrongSwipePwd() {
+        //AppLock主畫面下的鎖
         Point point[]= new Point[3];
-        point[2] = new Point(280,820);
-        point[1] = new Point(280,1330);
-        point[0] = new Point(780,1330);
+        point[2] = new Point((int)Math.round(device.getDisplayWidth() * 0.25),(int)Math.round(device.getDisplayHeight()*0.45));
+        point[1] = new Point((int)Math.round(device.getDisplayWidth()*0.25),(int)Math.round(device.getDisplayHeight()*0.81));
+        point[0] = new Point((int)Math.round(device.getDisplayWidth()*0.75),(int)Math.round(device.getDisplayHeight()*0.81));
         return point;
+
     }
 
     public  Point[] getSwipePwdV2() {
-        // 比較下面可放廣告
+        // APP 下的鎖畫面
         Point point[]= new Point[3];
-        point[0] = new Point(280,950);
-        point[1] = new Point(280,1550);
-        point[2] = new Point(780,1550);
+        point[0] = new Point((int)Math.round(device.getDisplayWidth() * 0.25),(int)Math.round(device.getDisplayHeight()/2));
+        point[1] = new Point((int)Math.round(device.getDisplayWidth()*0.25),(int)Math.round(device.getDisplayHeight()*0.83));
+        point[2] = new Point((int)Math.round(device.getDisplayWidth()*0.75),(int)Math.round(device.getDisplayHeight()*0.83));
         return point;
+
     }
 
     public  Point[] getWrongSwipePwdV2() {
-        // 比較下面可放廣告
+        // APP 下的鎖畫面
         Point point[]= new Point[3];
-        point[2] = new Point(280,950);
-        point[1] = new Point(280,1550);
-        point[0] = new Point(780,1550);
+        point[2] = new Point((int)Math.round(device.getDisplayWidth() * 0.25),(int)Math.round(device.getDisplayHeight()/2));
+        point[1] = new Point((int)Math.round(device.getDisplayWidth()*0.25),(int)Math.round(device.getDisplayHeight()*0.83));
+        point[0] = new Point((int)Math.round(device.getDisplayWidth()*0.75),(int)Math.round(device.getDisplayHeight()*0.83));
         return point;
+
     }
 
     public String getCurrentTime(){

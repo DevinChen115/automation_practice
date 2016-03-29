@@ -1,5 +1,6 @@
 package com.ileopard.cmqe.cm_productions;
 
+import android.os.Build;
 import android.os.RemoteException;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -14,6 +15,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Map;
 
 import static java.lang.Thread.sleep;
 
@@ -30,6 +33,96 @@ public class Applocker{
     public void setUp() throws RemoteException {
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         util = new Util(mDevice);
+
+    }
+
+
+    @Test  //applock 初始化
+    public void verify_initialize() throws RemoteException, InterruptedException {
+        String tc = "AppLock 初始化驗證";
+        mDevice.pressHome();
+        util.launchAppInHomeScreen(Define.appLock);
+        if (android.os.Build.VERSION.SDK_INT >= 23){
+            sleep(1000);
+            try {
+                UiObject protectBTN = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_lock_recommended_btn"));
+                protectBTN.click(); //開啟保護
+                sleep(1500);
+                mDevice.swipe(util.getSwipePwd(), 50);
+                sleep(1000);
+                mDevice.swipe(util.getSwipePwd(), 50);
+                sleep(1500);
+                UiObject Access_permission = mDevice.findObject(new UiSelector().resourceId("com.android.packageinstaller:id/permission_allow_button"));
+                Access_permission.click(); //開啟聯絡人權限
+                sleep(1000);
+                protectBTN.click(); //開啟完成
+                sleep(3000);
+                Access_permission.click(); //開啟電話權限
+                sleep(2000);
+                UiObject Tab_Advanced = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_item_subname"));
+                Tab_Advanced.click();
+                sleep(1000);
+                Access_permission.click(); //開啟相機權限
+                mDevice.waitForIdle();
+                Access_permission.click(); //開啟儲存權限
+                mDevice.pressHome();
+            } catch (UiObjectNotFoundException e) {
+                Assert.assertTrue(tc+"失敗",false);
+            }
+        }
+        else {
+            sleep(1000);
+            try{
+                UiObject protectBTN = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_lock_recommended_btn"));
+                protectBTN.click(); //開啟保護
+                sleep(1500);
+                mDevice.swipe(util.getSwipePwd(), 50);
+                sleep(1000);
+                mDevice.swipe(util.getSwipePwd(), 50);
+                sleep(1500);
+                if (mDevice.findObject(new UiSelector().enabled(true))){
+                    UiObject protectComplete = mDevice.findObject((new UiSelector().resourceId("com.cleanmaster.applock:id/btn_finish")));
+                    sleep(3000);
+                    mDevice.pressHome();
+                }
+                else {
+                    protectBTN.click(); //開啟完成
+                    sleep(3000);
+                    mDevice.pressHome();
+                }
+            } catch (UiObjectNotFoundException e) {
+                Assert.assertTrue(tc+"失敗",false);
+            }
+
+        }
+    }
+
+
+    //  @Test //applock TC 1-19 Patrick
+    public void verifyIntruderselfie() throws RemoteException, InterruptedException {
+        String tc = "applock_1-19 首次解鎖應用，輸錯一次密碼就會拍照，成功解鎖進入後出現拍下入侵者照片";
+    //    util.resetAppLocke();
+    //    mDevice.waitForIdle();
+    //    util.launchAppInHomeScreen(Define.appLock);
+        util.launchAppInHomeScreen(Define.app_line);
+        sleep(2000);
+        mDevice.swipe(util.getWrongSwipePwdV2(), 40);
+        sleep(1000);
+        mDevice.swipe(util.getSwipePwdV2(), 40);
+        sleep(1000);
+
+        sleep(3000);
+        try {
+            UiObject successwindow = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/btn_ok"));
+            successwindow.click();
+            UiObject checkPhoto = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/item_image"));
+            UiObject confirm = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/photo_btn_cancel"));
+            confirm.click();
+            mDevice.waitForIdle();
+        } catch (UiObjectNotFoundException e) {
+            Assert.assertTrue(tc+"失敗",false);
+        }
+
     }
 
    //@Test
@@ -79,7 +172,7 @@ public class Applocker{
 
    // @Test
     public void verifyShootAfterInputWrongPwd() throws UiObjectNotFoundException {
-        util.setLockAppFrequency("everyTime");
+        util.setLockAppFrequency(Define.freq_everytime);
         util.setShootFrequency(1);
         util.launchAppInHomeScreen("Facebook");
         mDevice.swipe(util.getWrongSwipePwdV2(), 40);
@@ -133,6 +226,7 @@ public class Applocker{
             Assert.assertTrue(e.toString(), false);
         }
     }
+
 
     @Test
     public void verifyUnLockAllApp() {
