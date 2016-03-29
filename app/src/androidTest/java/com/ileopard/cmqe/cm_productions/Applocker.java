@@ -227,18 +227,32 @@ public class Applocker{
         }
     }
 
-//    @Test
-//    public void verifyUnLockAllApp() {
-//        String tc = "applock_1-15 選擇解鎖全部App，確認解鎖任一app一次後上鎖的App全部解鎖";
-//        try {
-//            util.goToAppLockSetting();
-//            util.setLockAppFrequency(Define.freq_screenLock);
-//
-//
-//        } catch (UiObjectNotFoundException e) {
-//            Assert.assertTrue(e.toString(),false);
-//        }
-//    }
 
-
+    @Test
+    public void verifyUnLockAllApp() {
+        String tc = "applock_1-15 選擇解鎖全部App，確認解鎖任一app一次後上鎖的App全部解鎖";
+        String rId = "com.cleanmaster.applock:id/applock_pattern_layout";
+        try {
+            util.setLockAppFrequency(Define.freq_screenLock);
+            util.setUnLockAllApp(true);
+            util.launchAppInHomeScreen(Define.app_youtube);
+            Log.d("Devin",util.checkViewByResourceId(rId).toString());
+            sleep(1000);
+            if(util.checkViewByResourceId(rId)){
+                mDevice.swipe(util.getSwipePwdV2(),40);
+            }else {
+                Assert.assertTrue(tc+" 第一次開app",false);
+            }
+            util.launchAppInHomeScreen(Define.app_facebook);
+            if(util.checkViewByResourceId(rId)){
+                Assert.assertTrue(tc+" 第二次開app還要打密碼",false);
+            }else {
+                Assert.assertTrue(true);
+            }
+        } catch (UiObjectNotFoundException e) {
+            Assert.assertTrue(e.toString(),false);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
