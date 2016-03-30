@@ -1,6 +1,8 @@
 package com.ileopard.cmqe.cm_productions;
 
 import android.graphics.Point;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.uiautomator.UiCollection;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
@@ -14,6 +16,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by User2 on 2016/2/26.
@@ -42,26 +46,7 @@ public class Util {
     }
 
     public  void resetAppLocke() {
-        try {
-            // 1. 設定頁
-            goToAppsList();
-            scrollAndClickByDesc("設定");
-            // 2. 應用程式管理員
-            scrollAndClickByText("應用程式管理員");
-            // 3. CM AppLock
-            scrollAndClickByText(Define.appLock);
-            // 4. 清除資料
-            UiObject clrBtn = scrollAndGetUiObjByResourceId("com.android.settings:id/left_button");
-            if (clrBtn.isEnabled()) {
-                clrBtn.click();
-                device.waitForIdle();
-                UiObject confirm = device.findObject(new UiSelector().resourceId("com.android.settings:id/button1"));
-                confirm.click();
-                device.waitForIdle();
-            }
-        } catch (UiObjectNotFoundException e) {
-            Assert.assertTrue("Clear Cache "+e.toString(), false);
-        }
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("pm clear com.cleanmaster.applock");
     }
 
     public  void launchApp(String appName){
@@ -130,7 +115,7 @@ public class Util {
             UiObject mainAction = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/main_title_btn_right"));
             mainAction.click();
             device.waitForIdle();
-            UiObject setting = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/menu_main_layout"));
+            UiObject setting = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_menu_item_settings"));
             setting.click();
             device.waitForIdle();
         } catch (UiObjectNotFoundException e) {
@@ -167,26 +152,28 @@ public class Util {
             Assert.assertTrue("沒有 "+frequency+" 這個選項",false);
         }
     }
-
+    //輸錯多少次就拍照的switch case
     public  void setShootFrequency(int times) throws UiObjectNotFoundException{
-        int idx = 0;
         switch (times){
             case 1:
-                idx = 0;
+                SetAndClickFrequency(0); //Set 1次
                 break;
             case 2:
-                idx = 1;
+                SetAndClickFrequency(1); //Set 2次
                 break;
             case 3:
-                idx = 2;
+                SetAndClickFrequency(2); //Set 3次
                 break;
             case 5:
-                idx = 3;
+                SetAndClickFrequency(3); //Set 5次
                 break;
             default:
                 Assert.assertTrue("Method_setShootFrequency: only 1 2 3 5 can use",false);
                 break;
         }
+    }
+    //輸錯多少次就拍照的設定點擊
+    public void SetAndClickFrequency(int idx) throws UiObjectNotFoundException{
         goToAppLockSetting();
         UiObject shootBadGuy = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/setting_intruder_selfie"));
         shootBadGuy.click();
@@ -194,8 +181,14 @@ public class Util {
         UiObject shootTimes = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/setting_intruder_selfie_counter"));
         shootTimes.click();
         device.waitForIdle();
-        UiObject selectTimes = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/listView")).getChild(new UiSelector().index(idx));
-        selectTimes.click();
+        if(idx!=1) {
+            UiObject selectTimes = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/listView")).getChild(new UiSelector().index(idx));
+            selectTimes.click();}
+        else
+        {
+            device.click((int)Math.round(device.getDisplayWidth() * 0.5),(int)Math.round(device.getDisplayHeight()*0.52));
+        }
+
         device.waitForIdle();
     }
 
@@ -231,6 +224,11 @@ public class Util {
         } else {
             throw new UiObjectNotFoundException("Exception: 找不到 " + resourceID);
         }
+    }
+
+    //拍照截圖並儲存於/sdcard/Pictures/資料夾下
+    public void DoScreenShot(String resource){
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand("screencap -p /sdcard/Pictures/"+resource+".png");
     }
 
     public  UiObject scrollAndGetUiObjByResourceId(String resourceID) throws UiObjectNotFoundException {
@@ -452,18 +450,85 @@ public class Util {
         device.waitForIdle();
     }
 
-    public String getAppLockPwdType(){
+    public String getAppLockPwdType() {
         device.waitForIdle();
         String digitalRId = "com.cleanmaster.applock:id/keypad";
         String swipeRId = "com.cleanmaster.applock:id/lockpattern_pattern_layout";
-        if(checkViewByResourceId(digitalRId)){
+        if (checkViewByResourceId(digitalRId)) {
             return Define.pwdType_Digital;
-        }
-        else if(checkViewByResourceId(swipeRId)){
+        } else if (checkViewByResourceId(swipeRId)) {
             return Define.pwdType_Swipe;
+        } else {
+            return "";
+        }
+    }
+
+    //AppLock 跑OOBE流程
+    public void OOBE_intial() throws InterruptedException {
+        if (android.os.Build.VERSION.SDK_INT >= 23){
+            sleep(1000);
+            try {
+                UiObject protectBTN = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_lock_recommended_btn"));
+                protectBTN.click(); //開啟保護
+                sleep(1500);
+                device.swipe(getAppLockSwipePwd(), 50);
+                sleep(1000);
+                device.swipe(getAppLockSwipePwd(), 50);
+                sleep(1500);
+                UiObject Access_permission = device.findObject(new UiSelector().resourceId("com.android.packageinstaller:id/permission_allow_button"));
+                Access_permission.click(); //開啟聯絡人權限
+                sleep(1000);
+                UiObject secure_question = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/et_question"));
+                if (secure_question.exists()){
+                    UiObject completeBTN = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/btn_finish"));
+                    completeBTN.click();
+                    sleep(1500);
+                    protectBTN.click();
+                }
+                else {
+                    protectBTN.click(); //開啟完成
+                    sleep(3500);
+                }
+                Access_permission.click(); //開啟電話權限
+                sleep(2000);
+                UiObject Tab_Advanced = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_item_subname"));
+                Tab_Advanced.click();
+                sleep(1000);
+                Access_permission.click(); //開啟相機權限
+                device.waitForIdle();
+                Access_permission.click(); //開啟儲存權限
+                device.pressHome();
+            } catch (UiObjectNotFoundException e) {
+                DoScreenShot("AppLock初始流程失敗");
+                Assert.assertTrue("OOBE initial失敗",false);
+            }
         }
         else {
-            return "";
+            sleep(1000);
+            try{
+                UiObject protectBTN = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_lock_recommended_btn"));
+                protectBTN.click(); //開啟保護
+                sleep(1500);
+                device.swipe(getAppLockSwipePwd(), 50);
+                sleep(1000);
+                device.swipe(getAppLockSwipePwd(), 50);
+                sleep(2500);
+                UiObject secure_question = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/et_question"));
+                if (secure_question.exists()){
+                    UiObject completeBTN = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/btn_finish"));
+                    completeBTN.click();
+                    sleep(1500);
+                    protectBTN.click();
+                    device.pressHome();
+                }
+                else {
+                    protectBTN.click(); //開啟完成
+                    sleep(3000);
+                    device.pressHome();
+                }
+            } catch (UiObjectNotFoundException e) {
+                Assert.assertTrue("OOBE initial失敗",false);
+            }
         }
     }
 }
