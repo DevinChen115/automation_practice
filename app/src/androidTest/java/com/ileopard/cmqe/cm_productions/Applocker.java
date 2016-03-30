@@ -7,6 +7,7 @@ import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
+import android.util.Log;
 
 import junit.framework.Assert;
 
@@ -145,7 +146,7 @@ public class Applocker{
         UiObject verifyText = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/lock_count_time_text_tip2"));
         try {
             String verifyString = verifyText.getText();
-            Assert.assertEquals("禁止輸入！",verifyString );
+            Assert.assertEquals("禁止輸入！", verifyString);
             try {
                 sleep(10000);
             } catch (InterruptedException e) {
@@ -224,7 +225,7 @@ public class Applocker{
     }
 
 
-    @Test
+   // @Test
     public void verifyUnLockAllApp() {
         String tc = "applock_1-15 選擇解鎖全部App，確認解鎖任一app一次後上鎖的App全部解鎖";
         String rId = "com.cleanmaster.applock:id/applock_pattern_layout";
@@ -249,5 +250,32 @@ public class Applocker{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     *  Author: Devin
+     *  Date: 2016/03/29
+     *  TC:  applock_1-16 點選更改密碼重新設定圖形密碼
+     **/
+    @Test
+    public void verifyReSetSwipePwd() throws UiObjectNotFoundException {
+        String tc = "applock_1-16 點選更改密碼重新設定圖形密碼";
+        util.launchAppInHomeScreen(Define.appLock);
+        String pwdType = util.getAppLockPwdType();
+        util.unLockAppLock(pwdType, true);
+        util.setLockAppFrequency(Define.freq_everytime);
+        util.goToAppLockSetting();
+        util.goToChangePwdPageFromSetting();
+        util.changePwdInChangePage(Define.pwdType_Swipe, false);
+        util.launchAppInHomeScreen(Define.app_youtube);
+        util.unLockAppLockForApps(util.getAppLockPwdType(), false);
+        Assert.assertFalse(tc + "失敗", util.checkViewByResourceId("com.cleanmaster.applock:id/applock_keypad"));
+        Log.d("Devin", tc + " Start to roll back pwd");
+        util.launchAppInHomeScreen(Define.appLock);
+        util.unLockAppLock(util.getAppLockPwdType(), false);
+        util.goToAppLockSetting();
+        util.goToChangePwdPageFromSetting();
+        util.changePwdInChangePage(Define.pwdType_Swipe, true);
+
     }
 }

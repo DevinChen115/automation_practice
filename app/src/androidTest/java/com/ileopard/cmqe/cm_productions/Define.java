@@ -13,4 +13,6 @@ public class Define {
     public static String app_messenger = "Messenger";
     public static String pkgName_youtube="com.google.android.youtube";
     public static String app_line = "LINE";
+    public static String pwdType_Swipe = "swipe";
+    public static String pwdType_Digital = "digital";
 }

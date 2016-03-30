@@ -95,7 +95,6 @@ public class Util {
                     device.waitForIdle();
                     return true;
                 }else {
-                    Log.d("Devin", getCurrentTime());
                     UiObject appList = device.findObject(new UiSelector().resourceId("com.htc.launcher:id/all_apps_paged_view"));
                     appBefore = appList.getChild(new UiSelector().index(0)).getChild(new UiSelector().index(0)).getChild(new UiSelector().index(0));
                     checkBefore = appBefore.getContentDescription();
@@ -140,7 +139,7 @@ public class Util {
     }
 
 
-    public  void setLockAppFrequency(String frequency) throws UiObjectNotFoundException {
+    public  void setLockAppFrequency(String frequency) throws UiObjectNotFoundException{
         String lockFrequency=null;
         switch (frequency){
             case "screenLock":
@@ -157,11 +156,11 @@ public class Util {
                 break;
         }
         goToAppLockSetting();
-        UiObject lockSeting = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/setting_temp_unlock_layout"));
-        lockSeting.click();
-        device.waitForIdle();
-        UiObject lockFrequencyObj = device.findObject(new UiSelector().resourceId(lockFrequency));
         try{
+            UiObject lockSeting = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/setting_temp_unlock_layout"));
+            lockSeting.click();
+            device.waitForIdle();
+            UiObject lockFrequencyObj = device.findObject(new UiSelector().resourceId(lockFrequency));
             lockFrequencyObj.click();
             device.waitForIdle();
         } catch (UiObjectNotFoundException e){
@@ -257,6 +256,54 @@ public class Util {
         device.waitForIdle();
     }
 
+    public void unLockAppLockForAppsBySwipe(boolean status){
+        if(status){
+            device.swipe(getAppLockForAppsSwipePwd(),50);
+        }else {
+            device.swipe(getAppLockForAppsWrongSwipePwd(),50);
+        }
+        device.waitForIdle();
+    }
+
+    public void unLockAppLockByDigital(boolean status){
+        if(status){
+            // default pwd 88888
+            for(int i=0;i<5;i++){
+                device.pressKeyCode(15);
+                device.waitForIdle();
+            }
+        }else {
+            // other pwd 00000
+            for(int i=0;i<5;i++){
+                device.pressKeyCode(7);
+                device.waitForIdle();
+            }
+        }
+    }
+
+    /**
+     * 解鎖 AppLock
+     * @param pwdType 搭配 getAppLockPwdType 來決定要用什麼 type 來解鎖
+     * @param status  boolean, true 就是正確pwd
+    * */
+    public void unLockAppLock(String pwdType, boolean status){
+        if(pwdType.equals(Define.pwdType_Digital)){
+            unLockAppLockByDigital(status);
+        }
+        if(pwdType.equals(Define.pwdType_Swipe)){
+            unLockAppLockBySwipe(status);
+        }
+    }
+
+    public void unLockAppLockForApps(String pwdType, boolean status){
+        if(pwdType.equals(Define.pwdType_Digital)){
+            unLockAppLockByDigital(status);
+        }
+        if(pwdType.equals(Define.pwdType_Swipe)){
+
+        }
+    }
+
     public  Point[] getAppLockSwipePwd() {
         //AppLock主畫面下的鎖
         Point point[]= new Point[3];
@@ -326,13 +373,13 @@ public class Util {
 
     public void goToAppLockHome() throws UiObjectNotFoundException {
         launchAppInHomeScreen(Define.appLock);
-        device.swipe(getAppLockSwipePwd(), 40);
+        //device.swipe(getAppLockSwipePwd(), 40);
+        unLockAppLock(getAppLockPwdType(),true);
         device.waitForWindowUpdate("com.cleanmaster.applock",1000);
         UiObject leftBack = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/custom_title_btn_left"));
         UiObject leftTitle = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/custom_title_label"));
         String leftTitleStr = leftTitle.getText();
         while (!(leftTitleStr.equals("APP鎖"))){
-            Log.d("Devin", leftTitle.getText());
             leftBack.click();
             device.waitForIdle();
             leftTitle = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/custom_title_label"));
@@ -361,7 +408,7 @@ public class Util {
     }
     /**
      * 確認是否有 view
-     * @param resourceID = 要確認的 rid
+     * @param resourceId = 要確認的 rid
      * @return true 有Obj
      * @return false  沒有 Obj
      * */
@@ -371,6 +418,52 @@ public class Util {
             return true;
         }else {
             return false;
+        }
+    }
+
+    public void goToChangePwdPageFromSetting(){
+        UiObject changePwd = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/setting_change_password"));
+        try {
+            changePwd.click();
+            device.waitForIdle();
+        } catch (UiObjectNotFoundException e) {
+            Assert.assertTrue("似乎沒有在AppLock設定頁",false);
+        }
+    }
+
+    public void changePwdInChangePage(String pwdType, boolean pwd){
+        if(pwdType.equals(Define.pwdType_Digital)){
+            UiObject switchPwdType = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/lockpattern_switch_method"));
+            try {
+                switchPwdType.click();
+                device.waitForIdle();
+                unLockAppLockByDigital(pwd);
+                device.waitForIdle();
+                unLockAppLockByDigital(pwd);
+            } catch (UiObjectNotFoundException e) {
+                Assert.assertTrue("切換成數字密碼失敗",false);
+            }
+        }
+        if(pwdType.equals(Define.pwdType_Swipe)){
+            unLockAppLockBySwipe(pwd);
+            device.waitForIdle();
+            unLockAppLockBySwipe(pwd);
+        }
+        device.waitForIdle();
+    }
+
+    public String getAppLockPwdType(){
+        device.waitForIdle();
+        String digitalRId = "com.cleanmaster.applock:id/keypad";
+        String swipeRId = "com.cleanmaster.applock:id/lockpattern_pattern_layout";
+        if(checkViewByResourceId(digitalRId)){
+            return Define.pwdType_Digital;
+        }
+        else if(checkViewByResourceId(swipeRId)){
+            return Define.pwdType_Swipe;
+        }
+        else {
+            return "";
         }
     }
 }
