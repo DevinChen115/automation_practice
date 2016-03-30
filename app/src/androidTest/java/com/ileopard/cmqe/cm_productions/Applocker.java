@@ -43,10 +43,6 @@ public class Applocker{
         mDevice.pressHome();
         util.launchAppInHomeScreen(Define.appLock);
         util.OOBE_intial();
-<<<<<<< HEAD
-=======
-
->>>>>>> 1987565b8bc7344097732eefba0b187e19a31ad6
     }
 
 
@@ -62,12 +58,7 @@ public class Applocker{
         sleep(1000);
 
         mDevice.swipe(util.getAppLockForAppsSwipePwd(), 40);
-<<<<<<< HEAD
-=======
-        sleep(1000);
 
-
->>>>>>> 1987565b8bc7344097732eefba0b187e19a31ad6
         sleep(3000);
         try {
             UiObject successwindow = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/btn_ok"));
