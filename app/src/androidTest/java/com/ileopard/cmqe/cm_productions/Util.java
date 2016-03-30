@@ -1,8 +1,11 @@
 package com.ileopard.cmqe.cm_productions;
 
 import android.graphics.Point;
+<<<<<<< HEAD
 import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.UiCollection;
+=======
+>>>>>>> 05be9f66a1b3cd0c113c838a0eb943224f81beef
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
@@ -242,17 +245,20 @@ public class Util {
         }
         return result;
     }
-
-    public  void unLockBySwipe(boolean status) {
+    /**
+     * 是否要解鎖
+     * @param status  true 就是要解鎖
+     * */
+    public  void unLockAppLockBySwipe(boolean status) {
         if(status){
-            device.swipe(getSwipePwd(), 50);
+            device.swipe(getAppLockSwipePwd(), 50);
         }else {
-            device.swipe(getWrongSwipePwd(),50);
+            device.swipe(getAppLockWrongSwipePwd(),50);
         }
         device.waitForIdle();
     }
 
-    public  Point[] getSwipePwd() {
+    public  Point[] getAppLockSwipePwd() {
         //AppLock主畫面下的鎖
         Point point[]= new Point[3];
         point[0] = new Point((int)Math.round(device.getDisplayWidth() * 0.25),(int)Math.round(device.getDisplayHeight()*0.45));
@@ -261,7 +267,7 @@ public class Util {
         return point;
     }
 
-    public  Point[] getWrongSwipePwd() {
+    public  Point[] getAppLockWrongSwipePwd() {
         //AppLock主畫面下的鎖
         Point point[]= new Point[3];
         point[2] = new Point((int)Math.round(device.getDisplayWidth() * 0.25),(int)Math.round(device.getDisplayHeight()*0.45));
@@ -271,7 +277,7 @@ public class Util {
 
     }
 
-    public  Point[] getSwipePwdV2() {
+    public  Point[] getAppLockForAppsSwipePwd() {
         // APP 下的鎖畫面
         Point point[]= new Point[3];
         point[0] = new Point((int)Math.round(device.getDisplayWidth() * 0.25),(int)Math.round(device.getDisplayHeight()/2));
@@ -281,7 +287,7 @@ public class Util {
 
     }
 
-    public  Point[] getWrongSwipePwdV2() {
+    public  Point[] getAppLockForAppsWrongSwipePwd() {
         // APP 下的鎖畫面
         Point point[]= new Point[3];
         point[2] = new Point((int)Math.round(device.getDisplayWidth() * 0.25),(int)Math.round(device.getDisplayHeight()/2));
@@ -321,7 +327,7 @@ public class Util {
 
     public void goToAppLockHome() throws UiObjectNotFoundException {
         launchAppInHomeScreen(Define.appLock);
-        device.swipe(getSwipePwd(), 40);
+        device.swipe(getAppLockSwipePwd(), 40);
         device.waitForWindowUpdate("com.cleanmaster.applock",1000);
         UiObject leftBack = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/custom_title_btn_left"));
         UiObject leftTitle = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/custom_title_label"));
@@ -336,7 +342,7 @@ public class Util {
     }
     /**
      * 在上鎖設定頁, 勾選解鎖全部 app
-     * //@param unlock true = 勾選
+     * @param unlock true = 勾選
      * */
     public void setUnLockAllApp(Boolean unlock){
         UiObject unLockAllApp = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/setting_universal_lock_btn"));
@@ -354,7 +360,12 @@ public class Util {
             Assert.assertTrue(e.toString(),false);
         }
     }
-
+    /**
+     * 確認是否有 view
+     * @param resourceID = 要確認的 rid
+     * @return true 有Obj
+     * @return false  沒有 Obj
+     * */
     public Boolean checkViewByResourceId(String resourceId){
         UiObject view = device.findObject(new UiSelector().resourceId(resourceId));
         if(view.exists()){

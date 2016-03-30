@@ -1,7 +1,10 @@
 package com.ileopard.cmqe.cm_productions;
 
+<<<<<<< HEAD
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
+=======
+>>>>>>> 05be9f66a1b3cd0c113c838a0eb943224f81beef
 import android.os.RemoteException;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
@@ -9,15 +12,12 @@ import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiSelector;
-import android.util.Log;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.Map;
 
 import static java.lang.Thread.sleep;
 
@@ -44,7 +44,63 @@ public class Applocker{
         util.resetAppLocke();
         mDevice.pressHome();
         util.launchAppInHomeScreen(Define.appLock);
+<<<<<<< HEAD
         util.OOBE_intial();
+=======
+        if (android.os.Build.VERSION.SDK_INT >= 23){
+            sleep(1000);
+            try {
+                UiObject protectBTN = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_lock_recommended_btn"));
+                protectBTN.click(); //開啟保護
+                sleep(1500);
+                mDevice.swipe(util.getAppLockSwipePwd(), 50);
+                sleep(1000);
+                mDevice.swipe(util.getAppLockSwipePwd(), 50);
+                sleep(1500);
+                UiObject Access_permission = mDevice.findObject(new UiSelector().resourceId("com.android.packageinstaller:id/permission_allow_button"));
+                Access_permission.click(); //開啟聯絡人權限
+                sleep(1000);
+                protectBTN.click(); //開啟完成
+                sleep(3000);
+                Access_permission.click(); //開啟電話權限
+                sleep(2000);
+                UiObject Tab_Advanced = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_item_subname"));
+                Tab_Advanced.click();
+                sleep(1000);
+                Access_permission.click(); //開啟相機權限
+                mDevice.waitForIdle();
+                Access_permission.click(); //開啟儲存權限
+                mDevice.pressHome();
+            } catch (UiObjectNotFoundException e) {
+                Assert.assertTrue(tc+"失敗",false);
+            }
+        }
+        else {
+            sleep(1000);
+            try{
+                UiObject protectBTN = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_lock_recommended_btn"));
+                protectBTN.click(); //開啟保護
+                sleep(1500);
+                mDevice.swipe(util.getAppLockSwipePwd(), 50);
+                sleep(1000);
+                mDevice.swipe(util.getAppLockSwipePwd(), 50);
+                sleep(1500);
+                if (mDevice.findObject(new UiSelector().enabled(true))){
+                    UiObject protectComplete = mDevice.findObject((new UiSelector().resourceId("com.cleanmaster.applock:id/btn_finish")));
+                    sleep(3000);
+                    mDevice.pressHome();
+                }
+                else {
+                    protectBTN.click(); //開啟完成
+                    sleep(3000);
+                    mDevice.pressHome();
+                }
+            } catch (UiObjectNotFoundException e) {
+                Assert.assertTrue(tc+"失敗",false);
+            }
+
+        }
+>>>>>>> 05be9f66a1b3cd0c113c838a0eb943224f81beef
     }
 
 
@@ -56,9 +112,15 @@ public class Applocker{
         //
         util.launchAppInHomeScreen(Define.app_line);
         sleep(2000);
-        mDevice.swipe(util.getWrongSwipePwdV2(), 40);
+        mDevice.swipe(util.getAppLockForAppsWrongSwipePwd(), 40);
         sleep(1000);
+<<<<<<< HEAD
         mDevice.swipe(util.getSwipePwdV2(), 40);
+=======
+        mDevice.swipe(util.getAppLockForAppsSwipePwd(), 40);
+        sleep(1000);
+
+>>>>>>> 05be9f66a1b3cd0c113c838a0eb943224f81beef
         sleep(3000);
         try {
             UiObject successwindow = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/btn_ok"));
@@ -125,7 +187,7 @@ public class Applocker{
         util.launchAppInHomeScreen(Define.appLock);
         //launchAppInHTCM8("CM AppLock");
         for (int i =3;i>0;i--){
-            util.unLockBySwipe(false);
+            util.unLockAppLockBySwipe(false);
             UiObject subTitleObj = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/lockpattern_subtitle"));
             try {
                 if(i>1){
@@ -167,8 +229,8 @@ public class Applocker{
         util.setLockAppFrequency(Define.freq_everytime);
         util.setShootFrequency(1);
         util.launchAppInHomeScreen("Facebook");
-        mDevice.swipe(util.getWrongSwipePwdV2(), 40);
-        mDevice.swipe(util.getSwipePwdV2(), 40);
+        mDevice.swipe(util.getAppLockForAppsWrongSwipePwd(), 40);
+        mDevice.swipe(util.getAppLockForAppsSwipePwd(), 40);
         UiObject checkTitle = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/photo_title"));
         Assert.assertEquals("這個人想偷看你的 Facebook ", checkTitle.getText());
         UiObject checkPhoto = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/item_image"));
@@ -200,7 +262,7 @@ public class Applocker{
                 //util.launchAppInHomeScreen(Define.app_youtube);
                 applookTitleBar = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_up_layout"));
                 if(applookTitleBar.exists()){
-                    mDevice.swipe(util.getSwipePwdV2(), 40);
+                    mDevice.swipe(util.getAppLockForAppsSwipePwd(), 40);
                 }else {
 
                     result = Define.app_youtube+"似乎沒有上鎖喲!!"
@@ -228,10 +290,9 @@ public class Applocker{
             util.setLockAppFrequency(Define.freq_screenLock);
             util.setUnLockAllApp(true);
             util.launchAppInHomeScreen(Define.app_youtube);
-            Log.d("Devin",util.checkViewByResourceId(rId).toString());
             sleep(1000);
             if(util.checkViewByResourceId(rId)){
-                mDevice.swipe(util.getSwipePwdV2(),40);
+                mDevice.swipe(util.getAppLockForAppsSwipePwd(),40);
             }else {
                 Assert.assertTrue(tc+" 第一次開app",false);
             }
