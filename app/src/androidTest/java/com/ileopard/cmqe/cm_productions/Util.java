@@ -1,11 +1,8 @@
 package com.ileopard.cmqe.cm_productions;
 
 import android.graphics.Point;
-<<<<<<< HEAD
 import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.UiCollection;
-=======
->>>>>>> 05be9f66a1b3cd0c113c838a0eb943224f81beef
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObjectNotFoundException;
@@ -362,7 +359,7 @@ public class Util {
     }
     /**
      * 確認是否有 view
-     * @param resourceID = 要確認的 rid
+     * @param resourceId = 要確認的 rid
      * @return true 有Obj
      * @return false  沒有 Obj
      * */
@@ -383,9 +380,9 @@ public class Util {
                 UiObject protectBTN = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_lock_recommended_btn"));
                 protectBTN.click(); //開啟保護
                 sleep(1500);
-                device.swipe(getSwipePwd(), 50);
+                device.swipe(getAppLockSwipePwd(), 50);
                 sleep(1000);
-                device.swipe(getSwipePwd(), 50);
+                device.swipe(getAppLockSwipePwd(), 50);
                 sleep(1500);
                 UiObject Access_permission = device.findObject(new UiSelector().resourceId("com.android.packageinstaller:id/permission_allow_button"));
                 Access_permission.click(); //開啟聯絡人權限
@@ -421,9 +418,9 @@ public class Util {
                 UiObject protectBTN = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_lock_recommended_btn"));
                 protectBTN.click(); //開啟保護
                 sleep(1500);
-                device.swipe(getSwipePwd(), 50);
+                device.swipe(getAppLockSwipePwd(), 50);
                 sleep(1000);
-                device.swipe(getSwipePwd(), 50);
+                device.swipe(getAppLockSwipePwd(), 50);
                 sleep(2500);
                 UiObject secure_question = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/et_question"));
                 if (secure_question.exists()){
