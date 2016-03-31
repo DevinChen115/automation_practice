@@ -36,22 +36,19 @@ public class Applocker{
     }
 
 
-    @Test  //applock 初始化 :　OOBE for android M/L w/wo google account login   (Patrick)
+  //  @Test  //applock 初始化 :　OOBE for android M/L w/wo google account login   (Patrick)
     public void verify_initialize() throws RemoteException, InterruptedException {
         String tc = "AppLock 初始化驗證";
         util.resetAppLocke();
-        mDevice.pressHome();
-        util.launchAppInHomeScreen(Define.appLock);
         util.OOBE_intial();
     }
 
 
-    @Test //applock TC 1-19  (Patrick)
+  //  @Test //applock TC 1-19  (Patrick)
     public void verifyIntruderselfie() throws RemoteException, InterruptedException {
         String tc = "applock_1-19 首次解鎖應用，輸錯一次密碼就會拍照，成功解鎖進入後出現拍下入侵者照片";
         util.resetAppLocke();
-        mDevice.pressHome();
-        //
+        util.OOBE_intial();
         util.launchAppInHomeScreen(Define.app_line);
         sleep(2000);
         mDevice.swipe(util.getAppLockForAppsWrongSwipePwd(), 40);
@@ -96,10 +93,10 @@ public class Applocker{
             util.launchAppInHomeScreen(Define.app_line);
             sleep(2000);
             for(int j=0;j<i;j++) {
-                mDevice.swipe(util.getAppLockForAppsWrongSwipePwd(), 40);
+                util.unLockAppLockForApps(util.pwdTypeNow, false);
                 sleep(1000);
             }
-            mDevice.swipe(util.getAppLockForAppsSwipePwd(), 40);
+            util.unLockAppLockForApps(util.pwdTypeNow, true);
             sleep(3000);
             try {
                 UiObject checkPhoto = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/item_image"));
@@ -117,7 +114,7 @@ public class Applocker{
         }
     }
 
-    @Test
+  //  @Test
     public void verifyInputWrongPwdNeedToWaitTenSec() throws RemoteException {
         mDevice.wakeUp();
         mDevice.swipe(550, 1770, 550, 1280, 30);
@@ -153,7 +150,7 @@ public class Applocker{
         }
     }
 
-    @Test
+  //  @Test
     public void verifyDetectLaunchApp() throws RemoteException, UiObjectNotFoundException {
         util.launchAppInHTCM8(Define.app_youtube);
         UiObject logo = mDevice.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/cms_logo"));
@@ -162,7 +159,7 @@ public class Applocker{
         Assert.assertTrue("圖形鎖沒有顯示", lockPattern.exists());
     }
 
-    @Test
+  //  @Test
     public void verifyShootAfterInputWrongPwd() throws UiObjectNotFoundException {
         util.setLockAppFrequency(Define.freq_everytime);
         util.setShootFrequency(1);
@@ -175,7 +172,7 @@ public class Applocker{
         Assert.assertTrue("沒有拍照",checkPhoto.exists());
     }
 
-    @Test
+  //  @Test
     public void verifyGoToLockSetting() {
         String tc = "applock_1-11 點擊解鎖畫面\"上鎖設定\"選項進入上鎖設定頁面";
         try {
@@ -188,7 +185,7 @@ public class Applocker{
         }
     }
 
-    @Test
+  //  @Test
     public void verifyLockFreq_3() throws InterruptedException {
         String result;
         String tc ="applock_1-14 選擇每次打開app都上鎖，解鎖離開app後再開啟App，確認App會成功上鎖";
@@ -252,7 +249,7 @@ public class Applocker{
      *  Date: 2016/03/29
      *  TC:  applock_1-16 點選更改密碼重新設定圖形密碼
      **/
-    @Test
+   // @Test
     public void verifyReSetSwipePwd() throws UiObjectNotFoundException {
         String tc = "applock_1-16 點選更改密碼重新設定圖形密碼";
         util.launchAppInHomeScreen(Define.appLock);

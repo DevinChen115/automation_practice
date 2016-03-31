@@ -24,6 +24,7 @@ import static java.lang.Thread.sleep;
  */
 public class Util {
      UiDevice device;
+    public String pwdTypeNow;  //目前AppLock鎖的型態 (swipe or digital)
 
     public Util(UiDevice mDevice) {
         device = mDevice;
@@ -263,17 +264,19 @@ public class Util {
         device.waitForIdle();
     }
 
-    public void unLockAppLockByDigital(boolean status){
+    public void unLockAppLockByDigital(boolean status) throws UiObjectNotFoundException{
         if(status){
             // default pwd 88888
             for(int i=0;i<5;i++){
-                device.pressKeyCode(15);
+                UiObject pressKeyCode = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_keypad_8_text"));
+                pressKeyCode.click();
                 device.waitForIdle();
             }
         }else {
             // other pwd 00000
             for(int i=0;i<5;i++){
-                device.pressKeyCode(7);
+                UiObject pressKeyCode = device.findObject(new UiSelector().resourceId("com.cleanmaster.applock:id/applock_keypad_0_text"));
+                pressKeyCode.click();
                 device.waitForIdle();
             }
         }
@@ -284,7 +287,7 @@ public class Util {
      * @param pwdType 搭配 getAppLockPwdType 來決定要用什麼 type 來解鎖
      * @param status  boolean, true 就是正確pwd
     * */
-    public void unLockAppLock(String pwdType, boolean status){
+    public void unLockAppLock(String pwdType, boolean status)  throws UiObjectNotFoundException{
         if(pwdType.equals(Define.pwdType_Digital)){
             unLockAppLockByDigital(status);
         }
@@ -292,13 +295,17 @@ public class Util {
             unLockAppLockBySwipe(status);
         }
     }
-
-    public void unLockAppLockForApps(String pwdType, boolean status){
+    /**
+     * APP上鎖頁面下解鎖 AppLock
+     * @param pwdType 搭配 getAppLockPwdType 來決定要用什麼 type 來解鎖
+     * @param status  boolean, true 就是正確pwd
+     * */
+    public void unLockAppLockForApps(String pwdType, boolean status)  throws UiObjectNotFoundException{
         if(pwdType.equals(Define.pwdType_Digital)){
             unLockAppLockByDigital(status);
         }
         if(pwdType.equals(Define.pwdType_Swipe)){
-
+            unLockAppLockForAppsBySwipe(status);
         }
     }
 
@@ -370,7 +377,7 @@ public class Util {
 //    }
 
     public void goToAppLockHome() throws UiObjectNotFoundException {
-        launchAppInHomeScreen(Define.appLock);
+        //launchAppInHomeScreen(Define.appLock);
         //device.swipe(getAppLockSwipePwd(), 40);
         unLockAppLock(getAppLockPwdType(),true);
         device.waitForWindowUpdate("com.cleanmaster.applock",1000);
@@ -452,11 +459,14 @@ public class Util {
 
     public String getAppLockPwdType() {
         device.waitForIdle();
+        launchAppInHomeScreen(Define.appLock);
         String digitalRId = "com.cleanmaster.applock:id/keypad";
         String swipeRId = "com.cleanmaster.applock:id/lockpattern_pattern_layout";
         if (checkViewByResourceId(digitalRId)) {
+            pwdTypeNow = "digital";
             return Define.pwdType_Digital;
         } else if (checkViewByResourceId(swipeRId)) {
+            pwdTypeNow = "swipe";
             return Define.pwdType_Swipe;
         } else {
             return "";
@@ -465,6 +475,8 @@ public class Util {
 
     //AppLock 跑OOBE流程
     public void OOBE_intial() throws InterruptedException {
+        device.waitForIdle();
+        launchAppInHomeScreen(Define.appLock);
         if (android.os.Build.VERSION.SDK_INT >= 23){
             sleep(1000);
             try {
@@ -499,8 +511,8 @@ public class Util {
                 Access_permission.click(); //開啟儲存權限
                 device.pressHome();
             } catch (UiObjectNotFoundException e) {
-                DoScreenShot("AppLock初始流程失敗");
-                Assert.assertTrue("OOBE initial失敗",false);
+                DoScreenShot("AppLock初始流程失敗os6.0");
+                Assert.assertTrue("OOBE initial失敗 for OS 6.0",false);
             }
         }
         else {
@@ -527,7 +539,8 @@ public class Util {
                     device.pressHome();
                 }
             } catch (UiObjectNotFoundException e) {
-                Assert.assertTrue("OOBE initial失敗",false);
+                DoScreenShot("AppLock初始流程失敗os5.0");
+                Assert.assertTrue("OOBE initial失敗 for OS 5.0",false);
             }
         }
     }
